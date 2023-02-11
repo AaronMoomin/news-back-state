@@ -24,6 +24,31 @@
         </association>
     </resultMap>
 
+    <resultMap id="newsCRMap" type="NewCategoryRole">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="region" column="region"/>
+        <result property="author" column="author"/>
+        <result property="auditState" column="auditState"/>
+        <result property="publishState" column="publishState"/>
+        <result property="createTime" column="createTime"/>
+        <result property="star" column="star"/>
+        <result property="view" column="view"/>
+        <result property="publishTime" column="publishTime"/>
+        <association property="category" javaType="Categories">
+            <id property="id" column="id"/>
+            <result property="title" column="title"/>
+            <result property="value" column="value"/>
+        </association>
+        <association property="role" javaType="Roles">
+            <id property="id" column="id"/>
+            <result property="roleName" column="roleName"/>
+            <result property="roleType" column="roleType"/>
+            <result property="rights" column="rights"/>
+        </association>
+    </resultMap>
+
     <select id="queryNewsMostOften" resultMap="newsMap">
         SELECT
         *
@@ -61,9 +86,11 @@
     </select>
 
     <insert id="insertNews" parameterType="News">
-        insert into news (title, categoryId, content, region, author, roleId, auditState, publishState, createTime, star,
+        insert into news (title, categoryId, content, region, author, roleId, auditState, publishState, createTime,
+        star,
         view, publishTime)
-        values (#{title}, #{categoryId}, #{content}, #{region}, #{author}, #{roleId}, #{auditState}, #{publishState}, #{createTime}, #{star},
+        values (#{title}, #{categoryId}, #{content}, #{region}, #{author}, #{roleId}, #{auditState}, #{publishState},
+        #{createTime}, #{star},
         #{view}, #{publishTime});
     </insert>
 
@@ -77,7 +104,19 @@
         `auditState` = 0 and author = #{username}
     </select>
 
+    <select id="queryPreview" resultMap="newsCRMap">
+        select *
+        from news left join categories on news.categoryId = categories.id
+        left join roles on news.roleId = roles.id;
+    </select>
+
     <select id="queryAudit" resultMap="newsMap">
+        select *
+        from news right join categories on news.categoryId = categories.id
+        where news.auditState != 0 and news.publishState &lt;= 1;
+    </select>
+
+    <select id="queryUnderReview" resultMap="newsMap">
         SELECT
         *
         FROM
@@ -85,6 +124,12 @@
         RIGHT JOIN categories ON news.categoryId = categories.id
         WHERE
         `auditState` = 1
+    </select>
+
+    <select id="queryNewsByPublishState" resultMap="newsMap">
+        select *
+        from news left join categories on news.categoryId = categories.id
+        where news.author = #{author} and news.publishState = #{publishState}
     </select>
 
     <update id="updateAuditState">

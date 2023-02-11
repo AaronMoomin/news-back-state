@@ -1,6 +1,7 @@
 package com.jie.controller;
 
 import com.jie.mapper.NewsMapper;
+import com.jie.pojo.NewCategoryRole;
 import com.jie.pojo.News;
 import com.jie.pojo.NewsCategories;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,28 @@ public class NewsController {
         return "添加成功";
     }
 
+    @GetMapping("/lists/{author}/{publishState}")
+    public List<NewsCategories> queryNewsByPublishState(@PathVariable String author,@PathVariable int publishState){
+        return newsMapper.queryNewsByPublishState(author,publishState);
+    }
+
+    /**
+     * 详情
+     * @return
+     */
+    @GetMapping("/lists/preview")
+    public List<NewCategoryRole> queryPreview(){
+        return newsMapper.queryPreview();
+    }
+
     @GetMapping("/lists/audit")
     public List<NewsCategories> queryAudit(){
         return newsMapper.queryAudit();
+    }
+
+    @GetMapping("/lists/underReview")
+    public List<NewsCategories> queryUnderReview(){
+        return newsMapper.queryUnderReview();
     }
 
     @GetMapping("/lists/{username}")

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewsCategories extends News {
-
-    private Categories category;
+public class NewCategoryRole extends NewsCategories{
+    private Roles role;
 }
