@@ -61,6 +61,8 @@ public interface NewsMapper {
 
     int insertNews(News news);
 
+    int updateNew(News news);
+
     int updateAuditState(int id,int auditState);
 
     int updateState(int id,int auditState,int publishState);

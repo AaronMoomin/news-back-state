@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/news")
@@ -38,6 +39,12 @@ public class NewsController {
     public String addNews(@RequestBody News news){
         newsMapper.insertNews(news);
         return "添加成功";
+    }
+
+    @PostMapping("/update")
+    public String updateNew(@RequestBody News news){
+        newsMapper.updateNew(news);
+        return "更新成功";
     }
 
     @GetMapping("/lists/{author}/{publishState}")

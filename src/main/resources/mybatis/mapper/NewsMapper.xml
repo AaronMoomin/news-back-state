@@ -144,6 +144,13 @@
         where id = #{id};
     </update>
 
+    <update id="updateNew" parameterType="News">
+        update news
+        set categoryId = #{categoryId},title = #{title},content=#{content},
+        auditState = #{auditState}
+        where id = #{id};
+    </update>
+
     <delete id="deleteNews">
         delete
         from news
