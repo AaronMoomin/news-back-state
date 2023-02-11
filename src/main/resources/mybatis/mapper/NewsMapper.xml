@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jie.mapper.NewsMapper">
+
+    <resultMap id="newsMap" type="NewsCategories">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="region" column="region"/>
+        <result property="author" column="author"/>
+        <result property="roleId" column="roleId"/>
+        <result property="auditState" column="auditState"/>
+        <result property="publishState" column="publishState"/>
+        <result property="createTime" column="createTime"/>
+        <result property="star" column="star"/>
+        <result property="view" column="view"/>
+        <result property="publishTime" column="publishTime"/>
+        <association property="category" javaType="Categories">
+            <id property="id" column="id"/>
+            <result property="title" column="title"/>
+            <result property="value" column="value"/>
+        </association>
+    </resultMap>
+
+    <select id="queryNewsMostOften" resultMap="newsMap">
+        SELECT
+        *
+        FROM
+        news
+        RIGHT JOIN categories ON news.categoryId = categories.id
+        WHERE
+        `publishState` = 2
+        ORDER BY
+        news.`view` DESC
+        LIMIT 6
+    </select>
+
+    <select id="queryNewsMostStar" resultMap="newsMap">
+        SELECT
+        *
+        FROM
+        news
+        RIGHT JOIN categories ON news.categoryId = categories.id
+        WHERE
+        `publishState` = 2
+        ORDER BY
+        news.`star` DESC
+        LIMIT 6
+    </select>
+
+    <select id="queryNews" resultMap="newsMap">
+        SELECT
+        *
+        FROM
+        news
+        RIGHT JOIN categories ON news.categoryId = categories.id
+        WHERE
+        `publishState` = 2
+    </select>
+
+    <insert id="insertNews" parameterType="News">
+        insert into news (title, categoryId, content, region, author, roleId, auditState, publishState, createTime, star,
+        view, publishTime)
+        values (#{title}, #{categoryId}, #{content}, #{region}, #{author}, #{roleId}, #{auditState}, #{publishState}, #{createTime}, #{star},
+        #{view}, #{publishTime});
+    </insert>
+
+    <select id="queryDraft" resultMap="newsMap">
+        SELECT
+        *
+        FROM
+        news
+        RIGHT JOIN categories ON news.categoryId = categories.id
+        WHERE
+        `auditState` = 0 and author = #{username}
+    </select>
+
+    <select id="queryAudit" resultMap="newsMap">
+        SELECT
+        *
+        FROM
+        news
+        RIGHT JOIN categories ON news.categoryId = categories.id
+        WHERE
+        `auditState` = 1
+    </select>
+
+    <update id="updateAuditState">
+        update news
+        set auditState = #{auditState}
+        where id = #{id};
+    </update>
+
+    <update id="updateState">
+        update news
+        set auditState = #{auditState},publishState = #{publishState}
+        where id = #{id};
+    </update>
+
+    <delete id="deleteNews">
+        delete
+        from news
+        where id = #{id};
+    </delete>
+
+</mapper>

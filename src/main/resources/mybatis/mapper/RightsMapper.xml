@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jie.mapper.RightsMapper">
+
+    <resultMap id="rightsMap" type="RightsChildren">
+        <id property="id" column="id"/>
+        <result property="title" column="r_title"/>
+        <result property="key" column="r_key"/>
+        <result property="pagepermission" column="r_pagepermission"/>
+        <result property="grade" column="r_grade"/>
+        <collection property="children" ofType="Children">
+            <id column="c_id" property="id"/>
+            <result column="c_title" property="title"/>
+            <result column="c_rightId" property="rightId"/>
+            <result column="c_key" property="key"/>
+            <result column="c_grade" property="grade"/>
+            <result column="c_pagepermission" property="pagepermission"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryRights" resultMap="rightsMap">
+        SELECT
+        r.id,r.title as r_title,r.key as r_key,r.grade as r_grade,r.pagepermission as r_pagepermission,
+        c.id as c_id,c.title as c_title,c.key as c_key,c.grade as c_grade,c.pagepermission as c_pagepermission
+        FROM
+        rights r
+        LEFT JOIN children c ON  c.rightId = r.id
+    </select>
+
+    <update id="changePagePermission">
+        update rights
+        set pagepermission = #{pagepermission}
+        where id = #{id};
+    </update>
+
+    <delete id="deleteRight">
+        delete
+        from rights
+        where id = #{id};
+    </delete>
+
+</mapper>

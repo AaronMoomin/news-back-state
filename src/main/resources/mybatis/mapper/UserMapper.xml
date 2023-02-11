@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jie.mapper.UserMapper">
+
+    <resultMap id="userMap" type="UserRole">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="roleState" column="roleState"/>
+        <result property="_default" column="_default"/>
+        <result property="region" column="region"/>
+        <association property="role" javaType="Roles">
+            <id property="id" column="id"/>
+            <result property="roleName" column="roleName"/>
+            <result property="rights" column="rights"/>
+            <result property="roleType" column="roleType"/>
+        </association>
+    </resultMap>
+
+    <select id="queryUserList" resultMap="userMap" parameterType="User">
+        SELECT
+        users.id,
+        users.username,
+        users.`password`,
+        users.roleState,
+        users._default,
+        users.region,
+        users.roleId,
+        roles.roleName,
+        roles.rights,
+        roles.roleType
+        FROM
+        users
+        RIGHT JOIN roles ON users.roleId = roles.id
+        WHERE
+        username = #{username}
+        AND `password` = #{password}
+        AND roleState = #{roleState}
+    </select>
+
+    <select id="queryUserById" resultType="User">
+        select * from users where id = #{id}
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        insert into users (username,password,roleState,_default,region,roleId) values
+        (#{username},#{password},#{roleState},#{_default},#{region},#{roleId})
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update users
+        <set>
+            <if test="username!=null">
+                 username=#{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password!=null">
+                 password=#{password},
+            </if>
+            <if test="region!=null">
+                 region=#{region},
+            </if>
+            <if test="roleId!=null">
+                 roleId=#{roleId},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        delete from users where id=#{id}
+    </delete>
+</mapper>
