@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author xlwang55
  * @RestControllerAdvice(basePackages = "com.wxl52d41")
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.jie.controller")
 public class CommonResponseResult implements ResponseBodyAdvice<Object> {
     /**
      * 支持注解@ResponseNotIntercept，使某些方法无需使用Result封装

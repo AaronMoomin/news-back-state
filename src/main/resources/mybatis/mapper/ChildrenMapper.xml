@@ -14,4 +14,8 @@
         from children
         where id = #{id};
     </delete>
+
+    <select id="queryLists" resultType="com.jie.pojo.Children">
+        select * from children
+    </select>
 </mapper>

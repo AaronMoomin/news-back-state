@@ -11,7 +11,7 @@ public class User {
 
     private int id;
     private String username;
-    private int password;
+    private String password;
     private int roleState;
     private int _default;
     private String region;

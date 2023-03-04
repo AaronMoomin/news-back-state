@@ -2,7 +2,6 @@ package com.jie.advice;
 
 import com.jie.result.Result;
 import com.jie.result.ResultEnum;
-import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.servlet.ServletException;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  *
  * @author xlwang
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.jie.controller")
 @Slf4j
 public class CommonExceptionHandler {
 

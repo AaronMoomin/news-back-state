@@ -19,8 +19,8 @@
         <result property="publishTime" column="publishTime"/>
         <association property="category" javaType="Categories">
             <id property="id" column="id"/>
-            <result property="title" column="title"/>
-            <result property="value" column="value"/>
+            <result property="title" column="c_title"/>
+            <result property="value" column="c_value"/>
         </association>
     </resultMap>
 
@@ -29,6 +29,8 @@
         <result property="title" column="title"/>
         <result property="content" column="content"/>
         <result property="region" column="region"/>
+        <result property="categoryId" column="categoryId"/>
+        <result property="roleId" column="roleId"/>
         <result property="author" column="author"/>
         <result property="auditState" column="auditState"/>
         <result property="publishState" column="publishState"/>
@@ -37,12 +39,12 @@
         <result property="view" column="view"/>
         <result property="publishTime" column="publishTime"/>
         <association property="category" javaType="Categories">
-            <id property="id" column="id"/>
-            <result property="title" column="title"/>
-            <result property="value" column="value"/>
+            <id property="id" column="c_id"/>
+            <result property="title" column="c_title"/>
+            <result property="value" column="c_value"/>
         </association>
         <association property="role" javaType="Roles">
-            <id property="id" column="id"/>
+            <id property="id" column="r_id"/>
             <result property="roleName" column="roleName"/>
             <result property="roleType" column="roleType"/>
             <result property="rights" column="rights"/>
@@ -51,7 +53,7 @@
 
     <select id="queryNewsMostOften" resultMap="newsMap">
         SELECT
-        *
+        news.*,categories.id as c_id,categories.title as c_title,categories.value as c_value
         FROM
         news
         RIGHT JOIN categories ON news.categoryId = categories.id
@@ -64,7 +66,7 @@
 
     <select id="queryNewsMostStar" resultMap="newsMap">
         SELECT
-        *
+        news.*,categories.id as c_id,categories.title as c_title,categories.value as c_value
         FROM
         news
         RIGHT JOIN categories ON news.categoryId = categories.id
@@ -77,7 +79,7 @@
 
     <select id="queryNews" resultMap="newsMap">
         SELECT
-        *
+        news.*,categories.title as c_title,categories.value as c_value
         FROM
         news
         RIGHT JOIN categories ON news.categoryId = categories.id
@@ -96,7 +98,7 @@
 
     <select id="queryDraft" resultMap="newsMap">
         SELECT
-        *
+        news.*,categories.title as c_title,categories.value as c_value
         FROM
         news
         RIGHT JOIN categories ON news.categoryId = categories.id
@@ -104,32 +106,34 @@
         `auditState` = 0 and author = #{username}
     </select>
 
-    <select id="queryPreview" resultMap="newsCRMap">
-        select *
+    <select id="queryPreview" resultMap="newsCRMap" parameterType="int">
+        select
+        news.*,categories.id as c_id,categories.title as c_title,categories.value as c_value,roles.*
         from news left join categories on news.categoryId = categories.id
-        left join roles on news.roleId = roles.id;
+        left join roles on news.roleId = roles.id
+        where news.id = #{id}
     </select>
 
     <select id="queryAudit" resultMap="newsMap">
-        select *
+        select news.*,categories.id as c_id,categories.title as c_title,categories.value as c_value
         from news right join categories on news.categoryId = categories.id
-        where news.auditState != 0 and news.publishState &lt;= 1;
+        where news.auditState != 0 and news.publishState &lt;= 1 and author = #{username}
     </select>
 
     <select id="queryUnderReview" resultMap="newsMap">
         SELECT
-        *
+        news.*,categories.id as c_id,categories.title as c_title,categories.value as c_value
         FROM
         news
-        RIGHT JOIN categories ON news.categoryId = categories.id
+        LEFT JOIN categories ON news.categoryId = categories.id
         WHERE
-        `auditState` = 1
+        news.auditState = 1
     </select>
 
     <select id="queryNewsByPublishState" resultMap="newsMap">
-        select *
+        select news.*,categories.id as c_id,categories.title as c_title,categories.value as c_value
         from news left join categories on news.categoryId = categories.id
-        where news.author = #{author} and news.publishState = #{publishState}
+        where author = #{author} and publishState = #{publishState}
     </select>
 
     <update id="updateAuditState">
@@ -144,10 +148,34 @@
         where id = #{id};
     </update>
 
-    <update id="updateNew" parameterType="News">
+    <update id="updateNew">
         update news
-        set categoryId = #{categoryId},title = #{title},content=#{content},
-        auditState = #{auditState}
+        set categoryId = #{news.categoryId},title = #{news.title},content=#{news.content},
+        auditState = #{news.auditState}
+        where id = #{id};
+    </update>
+
+    <update id="releaseNews">
+        update news
+        set publishState = #{publishState},publishTime = #{publishTime}
+        where id = #{id};
+    </update>
+
+    <update id="updatePublishState">
+        update news
+        set publishState = #{publishState}
+        where id = #{id};
+    </update>
+
+    <update id="updateView">
+        update news
+        set view = #{view}
+        where id = #{id};
+    </update>
+
+    <update id="updateStar">
+        update news
+        set star = #{star}
         where id = #{id};
     </update>
 

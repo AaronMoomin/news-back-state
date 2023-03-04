@@ -15,4 +15,5 @@ public class Children {
     private String key;
     private int grade;
     private int pagepermission;
+    private int routepermission;
 }

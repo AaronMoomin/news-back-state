@@ -9,6 +9,7 @@
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="roleState" column="roleState"/>
+        <result property="roleId" column="roleId"/>
         <result property="_default" column="_default"/>
         <result property="region" column="region"/>
         <association property="role" javaType="Roles">
@@ -40,12 +41,31 @@
         AND roleState = #{roleState}
     </select>
 
-    <select id="queryUserById" resultType="User">
-        select * from users where id = #{id}
+    <select id="queryList" resultMap="userMap" resultType="UserRole">
+        SELECT
+        users.id,
+        users.username,
+        users.`password`,
+        users.roleState,
+        users._default,
+        users.region,
+        users.roleId,
+        roles.roleName,
+        roles.rights,
+        roles.roleType
+        FROM
+        users
+        LEFT JOIN roles ON users.roleId = roles.id
+    </select>
+
+    <select id="queryUserById" resultType="UserRole">
+        select * from users where id=#{id}
     </select>
 
     <insert id="addUser" parameterType="User">
-        insert into users (username,password,roleState,_default,region,roleId) values
+        insert into users
+        (username,password,roleState,_default,region,roleId)
+        values
         (#{username},#{password},#{roleState},#{_default},#{region},#{roleId})
     </insert>
 
@@ -68,7 +88,17 @@
         where id=#{id}
     </update>
 
-    <delete id="deleteUser" parameterType="int">
+    <update id="updateRoleState" parameterType="integer">
+        update users
+        <set>
+            <if test="roleState!=null">
+                roleState=#{roleState}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteUser">
         delete from users where id=#{id}
     </delete>
 </mapper>
